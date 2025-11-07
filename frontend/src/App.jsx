@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// frontend/src/App.jsx
+import { useState } from "react";
+import { enroll, health } from "./api";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [message, setMessage] = useState("");
+
+  async function testHealth() {
+    try {
+      const r = await health();
+      setMessage(JSON.stringify(r));
+    } catch (e) {
+      setMessage(e.message);
+    }
+  }
+
+  async function testEnroll() {
+    try {
+      const payload = {
+        first_name: "Kashaya",
+        last_name: "San",
+        email: "juan@example.com",
+        birthdate: "2004-08-28",
+        program: "BSIT",
+        year_level: "1",
+        contact: "09171234567",
+        address: "Cebu City",
+        remarks: "Applying from frontend"
+      };
+      const r = await enroll(payload);
+      setMessage(JSON.stringify(r));
+    } catch (e) {
+      setMessage(e.message);
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: 20 }}>
+      <h1>CSTA Frontend — Test API</h1>
+      <button onClick={testHealth}>Check /api/health</button>
+      <button style={{ marginLeft: 8 }} onClick={testEnroll}>POST /api/enroll/online</button>
+      <pre style={{ marginTop: 16 }}>{message}</pre>
+    </div>
+  );
 }
-
-export default App
